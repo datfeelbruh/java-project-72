@@ -26,14 +26,6 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'hexlet.code.App'
-        )
-    }
-    from { (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
-}
 
 task stage(dependsOn: ['clean', 'installDist'])
 installDist.mustRunAfter clean
