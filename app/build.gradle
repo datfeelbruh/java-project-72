@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'io.ebean'    version '13.6.5'
 }
 
 group 'hexlet.code'
@@ -18,6 +19,20 @@ dependencies {
     implementation 'io.javalin:javalin:4.3.0'
     implementation 'org.slf4j:slf4j-simple:1.7.36'
 
+
+    implementation 'com.h2database:h2:2.1.210'
+
+    implementation 'io.ebean:ebean:12.15.1'
+    implementation 'io.ebean:ebean-querybean:12.15.1'
+    implementation 'io.ebean:ebean-annotation:7.7'
+    implementation 'io.ebean:ebean-ddl-generator:12.15.1'
+    implementation 'io.ebean:ebean-migration:12.15.1'
+    annotationProcessor 'io.ebean:querybean-generator:13.6.5'
+
+    // NOTE: ebean-ddl-generator требует старые зависимости, которых нет в java 9 и выше
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
+    implementation 'javax.activation:activation:1.1.1'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
@@ -26,6 +41,10 @@ test {
     useJUnitPlatform()
 }
 
-
 task stage(dependsOn: ['clean', 'installDist'])
 installDist.mustRunAfter clean
+
+task generateMigrations(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'hexlet.code.MigrationGenerator'
+}

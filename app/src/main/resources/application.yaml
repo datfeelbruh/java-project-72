@@ -1,0 +1,20 @@
+datasource:
+  default: ${APP_ENV}
+
+  development:
+  db:
+    username: ""
+    password: ""
+    url: jdbc:h2:mem:app
+  production:
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    url: ${JDBC_DATABASE_URL}
+
+ebean:
+  development:
+    migration:
+      run: true
+  production:
+    migration:
+      run: true
