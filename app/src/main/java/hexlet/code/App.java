@@ -40,6 +40,5 @@ public class App {
     public static void main(String[] args) {
         Javalin app = getApp();
         app.start(getPort());
-        System.out.println(1);
     }
 }
