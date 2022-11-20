@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Анализатор страниц</title>
+        <link rel='stylesheet' href='/webjars/bootstrap/5.2.2/css/bootstrap.min.css'>
+        <script src="/webjars/bootstrap/5.2.2/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Анализатор страниц</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent" aria-expanded="false" aria-label="Toggle navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="navbarContent" class="collapse navbar-collapse">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Главная</a>
+                    <a class="nav-link" href="/urls">Сайты</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section layout:fragment="content"></section>
+    </main>
+    <footer class="footer border.top py-3 mt-5 bg-light">
+        <div class="container-xl">
+            <div class="text-center">
+                created by
+                <a href="https://github.com/datfeelbruh" target="_blank">Datfeelbruh</a>
+            </div>
+        </div>
+    </footer>
+    </body>
+</html>
