@@ -1,19 +1,16 @@
 package hexlet.code.domain;
 
+import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@AllArgsConstructor
 @Getter
 @Setter
-public class Url {
+public class Url extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -22,4 +19,8 @@ public class Url {
 
     @WhenCreated
     private Instant createdAt;
+
+    public Url(String name) {
+        this.name = name;
+    }
 }
