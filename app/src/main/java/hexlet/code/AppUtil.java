@@ -8,6 +8,7 @@ import java.net.URL;
 
 public class AppUtil {
     private static final Logger UtilLogger = LoggerFactory.getLogger(AppUtil.class);
+
     public static String getNormalizedUrl(String url) {
         try {
             UtilLogger.info("Попытка нормализовать полученный URL {}", url);
@@ -19,7 +20,7 @@ public class AppUtil {
                 normalizedUrl = normalizedUrl + ":" + receivedUrl.getPort();
             }
 
-            UtilLogger.info("Received normalized URL {}", receivedUrl);
+            UtilLogger.info("Получен URL {}", normalizedUrl);
 
             return normalizedUrl;
 

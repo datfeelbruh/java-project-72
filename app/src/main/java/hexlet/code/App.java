@@ -3,7 +3,6 @@ package hexlet.code;
 import hexlet.code.controllers.RootController;
 import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
-import io.javalin.core.JavalinConfig;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.slf4j.Logger;
@@ -12,17 +11,13 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-
-
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static javax.swing.UIManager.get;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class App {
-    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-
+    private static final Logger appLogger = LoggerFactory.getLogger(App.class);
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "3000");
-        LOGGER.info("port = " + port);
+        appLogger.info(port);
         return Integer.valueOf(port);
     }
 
@@ -32,11 +27,14 @@ public class App {
 
     private static TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
+
         templateEngine.addDialect(new LayoutDialect());
         templateEngine.addDialect(new Java8TimeDialect());
+
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
         templateEngine.addTemplateResolver(templateResolver);
+
         return templateEngine;
     }
 
@@ -45,13 +43,17 @@ public class App {
     }
 
     private static void addRoutes(Javalin app) {
-        app.get("/", RootController.welcome);
+       app.get("/", RootController.welcome);
 
-        app.routes(() -> {
-            path("/url", () -> {
-                get(UrlController.listUrls);
-            });
-        });
+       app.routes(() -> {
+           path("urls", () -> {
+               post(UrlController.addUrl);
+               get(UrlController.listUrls);
+               path("{id}", () -> {
+                   get(UrlController.showUrl);
+               });
+           });
+       });
     }
 
     public static Javalin getApp() {
@@ -59,6 +61,7 @@ public class App {
             if (!isProduction()) {
                 config.enableDevLogging();
             }
+            config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
 

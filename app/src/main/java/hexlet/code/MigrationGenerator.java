@@ -1,6 +1,5 @@
 package hexlet.code;
 
-
 import io.ebean.annotation.Platform;
 import io.ebean.dbmigration.DbMigration;
 import org.slf4j.Logger;
@@ -10,10 +9,11 @@ import java.io.IOException;
 
 public class MigrationGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MigrationGenerator.class);
+    private static final Logger migrationGeneratorLogger = LoggerFactory.getLogger(MigrationGenerator.class);
 
     public static void main(String[] args) throws IOException {
-        LOGGER.debug("init db migrations");
+        migrationGeneratorLogger.debug("Запускается миграция БД");
+
         DbMigration dbMigration = DbMigration.create();
         dbMigration.addPlatform(Platform.H2, "h2");
         dbMigration.addPlatform(Platform.POSTGRES, "postgres");
