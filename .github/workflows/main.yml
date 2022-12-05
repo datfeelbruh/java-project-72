@@ -1,27 +1,25 @@
-name: validator-check
+name: main CI
 
 on:
   - push
   - pull_request
 
 jobs:
-  build:
+  gradle:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
+      - uses: actions/setup-java@v2
         with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Build with Gradle
+          distribution: temurin
+          java-version: 17
+      - name: run Gradle build
         run: make build
-      - name: Publish code coverage
+      - name: get coverage report
         uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{secrets.TEST_COVERAGE}}
-          JACOCO_SOURCE_PATH: src/main/java
+          JACOCO_SOURCE_PATH: ${{github.workspace}}/app/src/main/java
         with:
           coverageCommand: make report
-          coverageLocations: ${{github.workspace}}/build/customJacocoReportDir/test/jacocoTestReport.xml:jacoco
+          coverageLocations: ${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
