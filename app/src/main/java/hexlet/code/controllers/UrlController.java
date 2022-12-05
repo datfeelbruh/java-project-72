@@ -34,6 +34,7 @@ public class UrlController {
         if (Objects.isNull(normalizedUrl)) {
             urlControllerLogger.info("AppUtil не смог нормализовать URL. Некорректный URL");
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
         }
@@ -47,6 +48,7 @@ public class UrlController {
         if (Objects.nonNull(databaseUrl)) {
             urlControllerLogger.info("Такой URL {} уже существует в БД", normalizedUrl);
             ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "info");
             ctx.redirect("/urls");
             return;
         }
@@ -57,6 +59,7 @@ public class UrlController {
         url.save();
 
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
+        ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls");
     };
 
