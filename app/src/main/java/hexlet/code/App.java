@@ -11,13 +11,15 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.apibuilder.ApiBuilder.path;
+import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.get;
 
 public class App {
-    private static final Logger appLogger = LoggerFactory.getLogger(App.class);
+    private static final Logger APP_LOGGER = LoggerFactory.getLogger(App.class);
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "3000");
-        appLogger.info(port);
+        APP_LOGGER.info(port);
         return Integer.valueOf(port);
     }
 
@@ -43,21 +45,21 @@ public class App {
     }
 
     private static void addRoutes(Javalin app) {
-       app.get("/", RootController.welcome);
-
-       app.routes(() -> {
-           path("urls", () -> {
-               post(UrlController.addUrl);
-               get(UrlController.listUrls);
-               path("{id}", () -> {
-                   get(UrlController.showUrl);
-               });
-           });
-       });
+        app.get("/", RootController.welcome);
+        app.routes(() -> {
+            path("urls", () -> {
+                post(UrlController.ADD_URL);
+                get(UrlController.LIST_URLS);
+                path("{id}", () -> {
+                    get(UrlController.SHOW_URL);
+                });
+            });
+        });
     }
 
     public static Javalin getApp() {
-        appLogger.info("{}", isProduction());
+        APP_LOGGER.info("{}", isProduction());
+        APP_LOGGER.info("{}", System.getenv().getOrDefault("APP_ENV", "development"));
         Javalin app = Javalin.create(config -> {
             if (!isProduction()) {
                 config.enableDevLogging();

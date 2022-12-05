@@ -9,10 +9,10 @@ import java.io.IOException;
 
 public class MigrationGenerator {
 
-    private static final Logger migrationGeneratorLogger = LoggerFactory.getLogger(MigrationGenerator.class);
+    private static final Logger MIGRATION_GENERATOR_LOGGER = LoggerFactory.getLogger(MigrationGenerator.class);
 
     public static void main(String[] args) throws IOException {
-        migrationGeneratorLogger.debug("Запускается миграция БД");
+        MIGRATION_GENERATOR_LOGGER.debug("Запускается миграция БД");
 
         DbMigration dbMigration = DbMigration.create();
         dbMigration.addPlatform(Platform.H2, "h2");

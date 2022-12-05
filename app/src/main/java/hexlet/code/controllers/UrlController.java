@@ -14,8 +14,8 @@ import java.util.Objects;
 import static hexlet.code.AppUtil.getNormalizedUrl;
 
 public class UrlController {
-    private static final Logger urlControllerLogger = LoggerFactory.getLogger(App.class);
-    public static final Handler listUrls = ctx -> {
+    private static final Logger URL_CONTROLLER_LOGGER = LoggerFactory.getLogger(App.class);
+    public static final Handler LIST_URLS = ctx -> {
         List<Url> urls = new QUrl()
                 .orderBy()
                 .id.asc()
@@ -26,34 +26,34 @@ public class UrlController {
         ctx.render("urls/index.html");
     };
 
-    public static final Handler addUrl = ctx -> {
+    public static final Handler ADD_URL = ctx -> {
         String normalizedUrl = getNormalizedUrl(ctx.formParam("url"));
 
-        urlControllerLogger.info("Проверка что AppUtil смог получить корретный URL");
+        URL_CONTROLLER_LOGGER.info("Проверка что AppUtil смог получить корретный URL");
 
         if (Objects.isNull(normalizedUrl)) {
-            urlControllerLogger.info("AppUtil не смог нормализовать URL. Некорректный URL");
+            URL_CONTROLLER_LOGGER.info("AppUtil не смог нормализовать URL. Некорректный URL");
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
         }
 
-        urlControllerLogger.info("Проверка что такого URL {} еще нет в БД", normalizedUrl);
+        URL_CONTROLLER_LOGGER.info("Проверка что такого URL {} еще нет в БД", normalizedUrl);
 
         Url databaseUrl = new QUrl()
                 .name.equalTo(normalizedUrl)
                 .findOne();
 
         if (Objects.nonNull(databaseUrl)) {
-            urlControllerLogger.info("Такой URL {} уже существует в БД", normalizedUrl);
+            URL_CONTROLLER_LOGGER.info("Такой URL {} уже существует в БД", normalizedUrl);
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flash-type", "info");
             ctx.redirect("/urls");
             return;
         }
 
-        urlControllerLogger.info("URL {} прошел все проверки и будет добавлен", normalizedUrl);
+        URL_CONTROLLER_LOGGER.info("URL {} прошел все проверки и будет добавлен", normalizedUrl);
 
         Url url = new Url(normalizedUrl);
         url.save();
@@ -63,7 +63,7 @@ public class UrlController {
         ctx.redirect("/urls");
     };
 
-    public static final Handler showUrl = ctx -> {
+    public static final Handler SHOW_URL = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
         Url url = new QUrl()

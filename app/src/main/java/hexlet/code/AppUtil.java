@@ -7,11 +7,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AppUtil {
-    private static final Logger UtilLogger = LoggerFactory.getLogger(AppUtil.class);
+    private static final Logger UTIL_LOGGER = LoggerFactory.getLogger(AppUtil.class);
 
     public static String getNormalizedUrl(String url) {
         try {
-            UtilLogger.info("Попытка нормализовать полученный URL {}", url);
+            UTIL_LOGGER.info("Попытка нормализовать полученный URL {}", url);
             URL receivedUrl = new URL(url);
 
             String normalizedUrl = String.format("%s://%s", receivedUrl.getProtocol(), receivedUrl.getHost());
@@ -20,7 +20,7 @@ public class AppUtil {
                 normalizedUrl = normalizedUrl + ":" + receivedUrl.getPort();
             }
 
-            UtilLogger.info("Получен URL {}", normalizedUrl);
+            UTIL_LOGGER.info("Получен URL {}", normalizedUrl);
 
             return normalizedUrl;
 

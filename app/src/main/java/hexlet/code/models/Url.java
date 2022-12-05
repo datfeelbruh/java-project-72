@@ -2,13 +2,14 @@ package hexlet.code.models;
 
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.Instant;
 
 @Entity
-public class Url extends Model {
+public final class Url extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -18,19 +19,12 @@ public class Url extends Model {
     @WhenCreated
     private Instant createdAt;
 
-    public Url(){};
+    public Url() {
+
+    };
 
     public Url(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Url{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
     }
 
     public long getId() {
