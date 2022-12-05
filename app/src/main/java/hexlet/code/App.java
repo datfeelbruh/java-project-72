@@ -57,6 +57,7 @@ public class App {
     }
 
     public static Javalin getApp() {
+        appLogger.info("{}", isProduction());
         Javalin app = Javalin.create(config -> {
             if (!isProduction()) {
                 config.enableDevLogging();

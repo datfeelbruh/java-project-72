@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Setter
 public class Url extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
