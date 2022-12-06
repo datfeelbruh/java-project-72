@@ -9,7 +9,17 @@
 
 # Анализатор страниц
 
-## [Приложение](https://sobad-ceo-analyze-production.up.railway.app/) на railway
+## [Приложение](https://sobad-ceo-analyze-production.up.railway.app/)
+
+## Stack
+* Java
+* Gradle
+* Javalin
+* Thymeleaf
+* Bootstrap
+* Ebean
+* H2, Postgres
+* Junit, MockitoWebServer, Unirest
 
 
 
