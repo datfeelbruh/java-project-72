@@ -6,21 +6,21 @@ import hexlet.code.models.query.QUrl;
 import hexlet.code.models.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
-import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.jsoup.Jsoup;
-import org.junit.jupiter.api.*;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Nested;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Юнит тесты для всего приложения")
@@ -193,7 +193,6 @@ public final class AppTest {
             HttpResponse<String> responseGetMockUrl = Unirest
                     .get(baseUrl + "/urls/" + url.getId())
                     .asString();
-            
 
             String description = "Sample";
             String title = "Страница для тестов";
