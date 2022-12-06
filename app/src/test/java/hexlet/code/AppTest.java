@@ -1,18 +1,26 @@
 package hexlet.code;
 
 import hexlet.code.models.Url;
+import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
+import hexlet.code.models.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
+import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.jsoup.Jsoup;
+import org.junit.jupiter.api.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Юнит тесты для всего приложения")
@@ -29,12 +37,11 @@ public final class AppTest {
     private static Database database;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException {
         app = App.getApp();
         app.start(0);
         baseUrl += app.port();
         database = DB.getDefault();
-
     }
 
     @AfterAll
@@ -44,7 +51,7 @@ public final class AppTest {
 
     @BeforeEach
     void beforeEach() {
-        database.truncate("url");
+        database.script().run("/truncate.sql");
     }
 
     @Nested
@@ -156,6 +163,56 @@ public final class AppTest {
 
             assertThat(body).contains(CORRECT_URL_FOR_TESTS);
             assertThat(body).contains("Страница уже существует");
+        }
+
+        @Test
+        @DisplayName("Тест функционала проверки URL")
+        void testCheckUrl() throws IOException {
+            String sample = Files.readString(Paths.get("src/test/resources/sample.html"));
+            MockWebServer mockServer = new MockWebServer();
+            String sampleUrl = mockServer.url("/").toString();
+            mockServer.enqueue(new MockResponse().setBody(sample));
+
+            HttpResponse<String> responsePostMockUrl = Unirest
+                    .post(baseUrl + "/urls/")
+                    .field("url", sampleUrl)
+                    .asEmpty();
+
+            String formattedUrl = AppUtil.getNormalizedUrl(sampleUrl);
+
+            Url url = new QUrl()
+                    .name.equalTo(formattedUrl)
+                    .findOne();
+
+            assertThat(url).isNotNull();
+
+            HttpResponse<String> responsePostMockUrlChecks = Unirest
+                    .post(baseUrl + "/urls/" + url.getId() + "/checks")
+                    .asEmpty();
+
+            HttpResponse<String> responseGetMockUrl = Unirest
+                    .get(baseUrl + "/urls/" + url.getId())
+                    .asString();
+            
+
+            String description = "Sample";
+            String title = "Страница для тестов";
+            String h1 = "Страница для тестов";
+
+            assertThat(responseGetMockUrl.getStatus()).isEqualTo(200);
+
+            UrlCheck urlsChecks = new QUrlCheck()
+                    .findList().get(0);
+
+            assertThat(urlsChecks).isNotNull();
+
+            assertThat(urlsChecks.getUrl().getId()).isEqualTo(url.getId());
+
+            assertThat(responseGetMockUrl.getBody()).contains(title);
+            assertThat(responseGetMockUrl.getBody()).contains(description);
+            assertThat(responseGetMockUrl.getBody()).contains(h1);
+
+            mockServer.shutdown();
         }
     }
 }

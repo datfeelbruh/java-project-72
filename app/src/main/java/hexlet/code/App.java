@@ -52,6 +52,7 @@ public class App {
                 get(UrlController.LIST_URLS);
                 path("{id}", () -> {
                     get(UrlController.SHOW_URL);
+                    post("/checks", UrlController.CHECK_URL);
                 });
             });
         });

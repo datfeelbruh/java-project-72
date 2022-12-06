@@ -2,25 +2,49 @@ package hexlet.code.controllers;
 
 import hexlet.code.App;
 import hexlet.code.models.Url;
+import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import static hexlet.code.AppUtil.getNormalizedUrl;
 
 public class UrlController {
     private static final Logger URL_CONTROLLER_LOGGER = LoggerFactory.getLogger(App.class);
     public static final Handler LIST_URLS = ctx -> {
-        List<Url> urls = new QUrl()
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
+        int urlPerPage = 12;
+        int offset = (page - 1) * urlPerPage;
+
+        PagedList<Url> pagedUrl = new QUrl()
+                .setFirstRow(offset)
+                .setMaxRows(urlPerPage)
                 .orderBy()
                 .id.asc()
-                .findList();
+                .findPagedList();
 
+        List<Url> urls = pagedUrl.getList();
+        int currentPage = pagedUrl.getPageIndex() + 1;
+        int lastPage = pagedUrl.getTotalPageCount() + 1;
+        List<Integer> pages = IntStream
+                .range(1, lastPage)
+                .boxed()
+                .toList();
+
+        ctx.attribute("pages", pages);
+        ctx.attribute("currentPage", currentPage);
         ctx.attribute("urls", urls);
 
         ctx.render("urls/index.html");
@@ -76,5 +100,40 @@ public class UrlController {
 
         ctx.attribute("url", url);
         ctx.render("urls/show.html");
+    };
+    public static final Handler CHECK_URL = ctx -> {
+        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
+        URL_CONTROLLER_LOGGER.info("ID {} полученный из контекста", id);
+
+        Url url = new QUrl()
+                .id.equalTo(id)
+                .findOne();
+
+        if (Objects.isNull(url)) {
+            throw new NotFoundResponse();
+        }
+
+        URL_CONTROLLER_LOGGER.info("Попытка провести проверку URL {}", url);
+        HttpResponse<String> response = Unirest
+                .get(url.getName())
+                .asString();
+
+        int statusCode = response.getStatus();
+        Document body = Jsoup.parse(response.getBody());
+        String title = body.title();
+        Element h1FromBody = body.selectFirst("h1");
+        String h1 = Objects.nonNull(h1FromBody) ? h1FromBody.text() : null;
+        Element descriptionFromBody = body.selectFirst("meta[name=description]");
+        String description = Objects.nonNull(descriptionFromBody)
+                ? descriptionFromBody.attr("content") : null;
+
+        UrlCheck checkedUrl = new UrlCheck(statusCode, title, h1, description, url);
+        URL_CONTROLLER_LOGGER.info("URL {} был проверен", url);
+
+        checkedUrl.save();
+
+        ctx.sessionAttribute("flash", "Страница успешно проверена");
+        ctx.sessionAttribute("flash-type", "success");
+        ctx.redirect("/urls/" + id);
     };
 }

@@ -35,8 +35,19 @@
                 <th>title</th>
                 <th>h1</th>
                 <th>description</th>
-                <th class="col-2">Дата проверкиe</th>
-            </tr></thead>
+                <th class="col-2">Дата проверки</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="urlCheck : ${url.getUrlChecks()}" th:object="${urlCheck}">
+                <td th:text="*{getId()}"></td>
+                <td th:text="*{getStatusCode()}"></td>
+                <td th:text="*{getTitle()}"></td>
+                <td th:text="*{getH1()}"></td>
+                <td th:text="*{getDescription()}"></td>
+                <td th:text="*{#temporals.format(getCreatedAt(), 'dd/MM/yy HH:mm')}"></td>
+            </tr>
+            </tbody>
         </table>
     </div>
 </section>

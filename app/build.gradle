@@ -58,6 +58,12 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'io.ebean:ebean-test:12.15.1'
     testImplementation 'com.konghq:unirest-java:3.13.6'
+    testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.10.0'
+
+
+    implementation 'com.konghq:unirest-java:3.11.09'
+
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 }
 
 test {
