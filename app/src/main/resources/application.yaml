@@ -10,7 +10,10 @@ datasource:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
 
 ebean:
+  default: ${APP_ENV}
   development:
     migration:
       run: true
-
+  production:
+    migration:
+      run: true
