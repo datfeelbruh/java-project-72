@@ -15,11 +15,12 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import static hexlet.code.AppUtil.getNormalizedUrl;
 
 public class UrlController {
     private static final Logger URL_CONTROLLER_LOGGER = LoggerFactory.getLogger(App.class);
@@ -136,4 +137,24 @@ public class UrlController {
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + id);
     };
+
+    public static String getNormalizedUrl(String url) {
+        try {
+            URL_CONTROLLER_LOGGER.info("Попытка нормализовать полученный URL {}", url);
+            URL receivedUrl = new URL(url);
+
+            String normalizedUrl = String.format("%s://%s", receivedUrl.getProtocol(), receivedUrl.getHost());
+
+            if (receivedUrl.getPort() > 0) {
+                normalizedUrl = normalizedUrl + ":" + receivedUrl.getPort();
+            }
+
+            URL_CONTROLLER_LOGGER.info("Получен URL {}", normalizedUrl);
+
+            return normalizedUrl;
+
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

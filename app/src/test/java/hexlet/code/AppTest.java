@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.controllers.UrlController;
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
@@ -37,7 +38,7 @@ public final class AppTest {
     private static Database database;
 
     @BeforeAll
-    public static void beforeAll() throws IOException {
+    public static void beforeAll() {
         app = App.getApp();
         app.start(0);
         baseUrl += app.port();
@@ -178,7 +179,7 @@ public final class AppTest {
                     .field("url", sampleUrl)
                     .asEmpty();
 
-            String formattedUrl = AppUtil.getNormalizedUrl(sampleUrl);
+            String formattedUrl = UrlController.getNormalizedUrl(sampleUrl);
 
             Url url = new QUrl()
                     .name.equalTo(formattedUrl)
