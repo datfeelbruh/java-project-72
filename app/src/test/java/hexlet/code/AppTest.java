@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.controllers.UrlController;
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
@@ -179,7 +178,7 @@ public final class AppTest {
                     .field("url", sampleUrl)
                     .asEmpty();
 
-            String formattedUrl = UrlController.getNormalizedUrl(sampleUrl);
+            String formattedUrl = sampleUrl.replaceAll("/$", "");
 
             Url url = new QUrl()
                     .name.equalTo(formattedUrl)

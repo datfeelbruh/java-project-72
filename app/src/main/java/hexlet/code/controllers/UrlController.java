@@ -138,7 +138,7 @@ public class UrlController {
         ctx.redirect("/urls/" + id);
     };
 
-    public static String getNormalizedUrl(String url) {
+    private static String getNormalizedUrl(String url) {
         try {
             URL_CONTROLLER_LOGGER.info("Попытка нормализовать полученный URL {}", url);
             URL receivedUrl = new URL(url);
