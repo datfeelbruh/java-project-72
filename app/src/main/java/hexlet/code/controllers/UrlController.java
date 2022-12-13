@@ -9,6 +9,7 @@ import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -114,27 +115,34 @@ public class UrlController {
             throw new NotFoundResponse();
         }
 
-        URL_CONTROLLER_LOGGER.info("Попытка провести проверку URL {}", url);
-        HttpResponse<String> response = Unirest
-                .get(url.getName())
-                .asString();
+        URL_CONTROLLER_LOGGER.info("Попытка провести проверку URL {}", url.getName());
+        try {
+            HttpResponse<String> response = Unirest
+                    .get(url.getName())
+                    .asString();
 
-        int statusCode = response.getStatus();
-        Document body = Jsoup.parse(response.getBody());
-        String title = body.title();
-        Element h1FromBody = body.selectFirst("h1");
-        String h1 = Objects.nonNull(h1FromBody) ? h1FromBody.text() : null;
-        Element descriptionFromBody = body.selectFirst("meta[name=description]");
-        String description = Objects.nonNull(descriptionFromBody)
-                ? descriptionFromBody.attr("content") : null;
+            int statusCode = response.getStatus();
+            Document body = Jsoup.parse(response.getBody());
+            String title = body.title();
+            Element h1FromBody = body.selectFirst("h1");
+            String h1 = Objects.nonNull(h1FromBody) ? h1FromBody.text() : null;
+            Element descriptionFromBody = body.selectFirst("meta[name=description]");
+            String description = Objects.nonNull(descriptionFromBody)
+                    ? descriptionFromBody.attr("content") : null;
 
-        UrlCheck checkedUrl = new UrlCheck(statusCode, title, h1, description, url);
-        URL_CONTROLLER_LOGGER.info("URL {} был проверен", url);
+            UrlCheck checkedUrl = new UrlCheck(statusCode, title, h1, description, url);
+            URL_CONTROLLER_LOGGER.info("URL {} был проверен", url);
 
-        checkedUrl.save();
+            checkedUrl.save();
 
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flash-type", "success");
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flash-type", "success");
+
+        } catch (UnirestException e) {
+            URL_CONTROLLER_LOGGER.info("Не удалось проверить URL {}", url.getName());
+            ctx.sessionAttribute("flash", "Не удалось проверить страницу");
+            ctx.sessionAttribute("flash-type", "danger");
+        }
         ctx.redirect("/urls/" + id);
     };
 
